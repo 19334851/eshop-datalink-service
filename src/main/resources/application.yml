@@ -9,3 +9,7 @@ server:
 spring:
   application:
     name: eshop-datalink-service
+  cache
+    type: ehcache
+    ehcache
+      config:  classpath:ehcache.xml

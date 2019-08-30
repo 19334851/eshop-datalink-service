@@ -1,6 +1,7 @@
 package com.roncoo.eshop.datalink.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.roncoo.eshop.datalink.service.CacheService;
 import com.roncoo.eshop.datalink.service.EshopProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,12 +16,18 @@ public class DataLinkController {
     private EshopProductService eshopProductService;
 
     @Autowired
+    private CacheService cacheService;
+
+    @Autowired
     private JedisPool jedisPool;
 
     @RequestMapping("/getProduct")
     public String getProduct(Long productId) {
         // 先读本地的ehcache，但是我们这里就不做了，因为之前都演示过了，大家自己做就可以了
-
+        String productData = cacheService.getLocalCache(productId);
+        if(productData != null){
+            return productData;
+        }
         // 读redis主集群
         Jedis jedis = jedisPool.getResource();
         String dimProductJSON = jedis.get("dim_product_" + productId);
@@ -38,8 +45,9 @@ public class DataLinkController {
                     productDataJSONObject.put("product_specification", JSONObject.parse(productSpecificationDataJSON));
                 }
                 jedis.set("dim_product_" + productId, productDataJSONObject.toJSONString());
-
-                return productDataJSONObject.toJSONString();
+                productData = productDataJSONObject.toJSONString();
+                cacheService.saveLocalCache(productId,productData);
+                return productData;
             }
         }
         return "";
