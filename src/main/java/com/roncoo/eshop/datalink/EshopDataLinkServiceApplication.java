@@ -1,7 +1,9 @@
 package com.roncoo.eshop.datalink;
 
+import com.roncoo.eshop.datalink.listener.InitListener;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -27,7 +29,15 @@ public class EshopDataLinkServiceApplication {
         config.setMaxIdle(5);
         config.setMaxWaitMillis(1000 * 10);
         config.setTestOnBorrow(true);
-        return new JedisPool(config, "192.168.31.223", 1111);
+        return new JedisPool(config, "localhost", 6379);
+        //return new JedisPool(config, "192.168.31.223", 1111);
+    }
+
+    @Bean
+    public ServletListenerRegistrationBean servletListenerRegistrationBean(){
+        ServletListenerRegistrationBean servletListenerRegistrationBean = new ServletListenerRegistrationBean();
+        servletListenerRegistrationBean.setListener(new InitListener());
+        return servletListenerRegistrationBean;
     }
 
 }
