@@ -1,11 +1,12 @@
 package com.roncoo.eshop.datalink.service;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value= "eshop-product-service")
+@FeignClient(name= "eshop-product-service",fallbackFactory = ProductServiceFallbackFactory.class)
 public interface EshopProductService {
 
     @RequestMapping(value = "/brand/findById",method = RequestMethod.GET)
@@ -34,4 +35,57 @@ public interface EshopProductService {
 
     @RequestMapping(value = "/product-specification/findByProductId",method = RequestMethod.GET)
     String findProductSpecificationByProductId(@RequestParam(value = "productId") Long productId);
+}
+
+@Component
+class ProductServiceFallbackFactory implements feign.hystrix.FallbackFactory<EshopProductService>{
+    @Override
+    public EshopProductService create(Throwable cause) {
+        return new EshopProductService() {
+            @Override
+            public String findBrandById(Long id) {
+                return null;
+            }
+
+            @Override
+            public String findBrandByIds(String ids) {
+                return null;
+            }
+
+            @Override
+            public String findCategoryById(Long id) {
+                return null;
+            }
+
+            @Override
+            public String findProductIntroById(Long id) {
+                return null;
+            }
+
+            @Override
+            public String findProductPropertyById(Long id) {
+                return null;
+            }
+
+            @Override
+            public String findProductPropertyByProductId(Long productId) {
+                return null;
+            }
+
+            @Override
+            public String findProductById(Long id) {
+                return null;
+            }
+
+            @Override
+            public String findProductSpecificationById(Long id) {
+                return null;
+            }
+
+            @Override
+            public String findProductSpecificationByProductId(Long productId) {
+                return null;
+            }
+        };
+    }
 }

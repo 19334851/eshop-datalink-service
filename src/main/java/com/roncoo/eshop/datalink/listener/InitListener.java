@@ -13,12 +13,14 @@ import javax.servlet.ServletContextListener;
 public class InitListener implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent sce){
+        /*
         ServletContext sc = sce.getServletContext();
         ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(sc);
         SpringContext.setApplicationContext(context);
 
         ZooKeeperSession.init();
         new Thread(new RebuildCacheThread()).start();
+        */
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
